@@ -27,6 +27,9 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-redis")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.kafka:spring-kafka")
+	implementation("org.jsoup:jsoup:1.17.2") // HTML 파싱 라이브러리
+	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+	implementation("com.aventrix.jnanoid:jnanoid:2.0.0")
 	compileOnly("org.projectlombok:lombok")
 	runtimeOnly("org.postgresql:postgresql")
 	annotationProcessor("org.projectlombok:lombok")
