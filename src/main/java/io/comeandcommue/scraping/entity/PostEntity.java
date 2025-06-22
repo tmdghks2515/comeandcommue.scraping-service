@@ -4,6 +4,7 @@ import io.comeandcommue.scraping.util.NanoId;
 import io.comeandcommue.scraping.vo.CommunityType;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 
@@ -51,6 +52,7 @@ public class PostEntity {
     @Column(name = "posted_at")
     private LocalDateTime postedAt;
 
+    @CreatedDate
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 }

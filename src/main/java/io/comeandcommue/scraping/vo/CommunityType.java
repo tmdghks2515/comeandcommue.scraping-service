@@ -21,6 +21,15 @@ public enum CommunityType {
                 return type;
             }
         }
-        throw new IllegalArgumentException("No CommunityType found for order: " + order);
+        return DCINSIDE; // Default to DCINSIDE if no match found
+    }
+
+    public static CommunityType fromName(String name) {
+        for (CommunityType type : values()) {
+            if (type.name().equalsIgnoreCase(name)) {
+                return type;
+            }
+        }
+        throw new IllegalArgumentException("No CommunityType found for name: " + name);
     }
 }
