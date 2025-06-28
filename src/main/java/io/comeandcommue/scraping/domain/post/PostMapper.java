@@ -1,7 +1,4 @@
-package io.comeandcommue.scraping.mapper;
-
-import io.comeandcommue.scraping.dto.PostDto;
-import io.comeandcommue.scraping.entity.PostEntity;
+package io.comeandcommue.scraping.domain.post;
 
 public class PostMapper {
 
@@ -10,7 +7,7 @@ public class PostMapper {
 
         return PostDto.of()
                 .id(entity.getId())
-                .communityPostId(entity.getCommunityPostId())
+                .postNo(entity.getPostNo())
                 .title(entity.getTitle())
                 .linkHref(entity.getLinkHref())
                 .thumbnailSrc(entity.getThumbnailSrc())
@@ -27,9 +24,9 @@ public class PostMapper {
     public static PostEntity toEntity(PostDto dto) {
         if (dto == null) return null;
 
-        return PostEntity.of() // Builder 패턴 사용 중
+        return PostEntity.of()
                 .id(dto.getId())
-                .communityPostId(dto.getCommunityPostId())
+                .postNo(dto.getPostNo())
                 .title(dto.getTitle())
                 .linkHref(dto.getLinkHref())
                 .thumbnailSrc(dto.getThumbnailSrc())

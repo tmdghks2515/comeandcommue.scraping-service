@@ -1,4 +1,4 @@
-package io.comeandcommue.scraping.util;
+package io.comeandcommue.scraping.common;
 
 import org.hibernate.annotations.IdGeneratorType;
 

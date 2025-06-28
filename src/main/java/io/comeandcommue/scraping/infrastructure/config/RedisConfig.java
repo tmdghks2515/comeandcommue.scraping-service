@@ -1,4 +1,4 @@
-package io.comeandcommue.scraping.config;
+package io.comeandcommue.scraping.infrastructure.config;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;

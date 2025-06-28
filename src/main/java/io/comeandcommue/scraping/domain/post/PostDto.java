@@ -1,6 +1,6 @@
-package io.comeandcommue.scraping.dto;
+package io.comeandcommue.scraping.domain.post;
 
-import io.comeandcommue.scraping.vo.CommunityType;
+import io.comeandcommue.scraping.common.CommunityType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class PostDto {
     private String id;
-    private String communityPostId;
+    private String postNo;
     private String title;
     private String linkHref;
     private String thumbnailSrc;

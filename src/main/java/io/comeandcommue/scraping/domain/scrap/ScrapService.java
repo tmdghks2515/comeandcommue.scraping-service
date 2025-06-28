@@ -1,13 +1,14 @@
-package io.comeandcommue.scraping.domain;
+package io.comeandcommue.scraping.domain.scrap;
 
-import io.comeandcommue.scraping.dto.PostDto;
-import io.comeandcommue.scraping.entity.PostEntity;
-import io.comeandcommue.scraping.vo.CommunityType;
+import io.comeandcommue.scraping.common.CommunityType;
+import io.comeandcommue.scraping.domain.post.PostEntity;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.springframework.stereotype.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -15,10 +16,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
-public class PostDomainService {
-    public List<PostDto> scrapeDcinsidePost() {
-        List<PostDto> posts = new ArrayList<>();
+@Service
+public class ScrapService {
+    private static final Logger log = LoggerFactory.getLogger(ScrapService.class);
+
+    public List<PostEntity> scrapDcinsidePosts() {
+        List<PostEntity> posts = new ArrayList<>();
         String exampleUrl = "https://gall.dcinside.com/board/lists/?id=dcbest&list_num=100";
 
         try {
@@ -61,7 +64,7 @@ public class PostDomainService {
                     Integer likeCount = likeCountElement != null ? Integer.parseInt(likeCountElement.text()) : null;
 
                     posts.add(
-                            PostDto.of()
+                            PostEntity.of()
                                     .communityPostId(communityPostId)
                                     .title(title)
                                     .linkHref(href)
@@ -76,11 +79,13 @@ public class PostDomainService {
                     );
                 } catch (Exception e) {
                     // 예외 발생 시 해당 row는 무시하고 다음 row로 넘어감
+                    log.debug("Error processing row: {}", e.getMessage());
                 }
             }
-            return posts;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            log.error("Error connecting to dcinside: {}", e.getMessage());
         }
+
+        return posts;
     }
 }

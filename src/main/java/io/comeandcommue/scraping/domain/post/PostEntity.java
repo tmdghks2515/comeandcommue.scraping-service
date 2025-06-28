@@ -1,7 +1,7 @@
-package io.comeandcommue.scraping.entity;
+package io.comeandcommue.scraping.domain.post;
 
-import io.comeandcommue.scraping.util.NanoId;
-import io.comeandcommue.scraping.vo.CommunityType;
+import io.comeandcommue.scraping.common.NanoId;
+import io.comeandcommue.scraping.common.CommunityType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -21,8 +21,8 @@ public class PostEntity {
     @NanoId
     private String id;
 
-    @Column(name = "community_post_id")
-    private String communityPostId;
+    @Column(name = "post_no")
+    private String postNo;
 
     @Column(name = "title")
     private String title;

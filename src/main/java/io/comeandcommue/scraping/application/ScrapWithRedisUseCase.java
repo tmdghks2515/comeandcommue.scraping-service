@@ -1,20 +1,15 @@
-package io.comeandcommue.scraping.service;
+package io.comeandcommue.scraping.application;
 
-import io.comeandcommue.scraping.domain.PostDomainService;
-import io.comeandcommue.scraping.dto.PostDto;
-import io.comeandcommue.scraping.entity.PostEntity;
-import io.comeandcommue.scraping.mapper.PostMapper;
-import io.comeandcommue.scraping.repository.PostRepository;
-import io.comeandcommue.scraping.vo.CommunityType;
+import io.comeandcommue.scraping.common.CommunityType;
+import io.comeandcommue.scraping.domain.post.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.data.redis.core.ZSetOperations;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -23,23 +18,23 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
+@Component
 @Transactional
 @RequiredArgsConstructor
-public class ScrapeCommunityService {
-    private static final Logger log = LoggerFactory.getLogger(ScrapeCommunityService.class);
+public class ScrapWithRedisUseCase {
+    private static final Logger log = LoggerFactory.getLogger(ScrapWithRedisUseCase.class);
 
-    private final PostDomainService postDomainService;
+    private final PostService postDomainService;
     private final PostRepository postRepository;
     private final RedisTemplate<String, Object> redisTemplate;
     private final RedisTemplate<String, String> stringRedisTemplate;
 
     private static final String LATEST_SCRAPED_COMMU_TYPE = "posts:commutype";
     private static final String LATEST_POSTS_KEY = "posts:latest";
-    private static final String COMMU_TYPE_POST_IDS_KEY_FORMAT = "posts:ids:%s";
-    private static final String LATEST_COMMU_TYPE_POSTS_KEY_FORMAT = "posts:latest:%s";
+    private static final String COMMU_TYPE_POST_IDS_KEY_FORMAT = "posts:%s:ids";
+    private static final String LATEST_COMMU_TYPE_POSTS_KEY_FORMAT = "posts:%s:latest";
 
-    public void scrapeByCommuType() {
+    public void scrapByCommuType() {
         ValueOperations<String, String> stringValueOps = stringRedisTemplate.opsForValue();
 
         LocalDateTime now = LocalDateTime.now();
@@ -53,7 +48,7 @@ public class ScrapeCommunityService {
         log.info("Starting scraping for community type: {}", commuType);
 
         List<PostDto> posts = switch (commuType) {
-            case DCINSIDE -> postDomainService.scrapeDcinsidePost();
+            case DCINSIDE -> postDomainService.scrapDcinsidePost();
             case FMKOREA -> throw new UnsupportedOperationException("FMKOREA scraping not implemented yet");
             case THEQOO -> throw new UnsupportedOperationException("THEQOO scraping not implemented yet");
         };

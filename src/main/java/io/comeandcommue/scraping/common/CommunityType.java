@@ -1,4 +1,4 @@
-package io.comeandcommue.scraping.vo;
+package io.comeandcommue.scraping.common;
 
 import lombok.Getter;
 
