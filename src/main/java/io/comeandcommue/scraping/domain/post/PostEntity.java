@@ -5,6 +5,7 @@ import io.comeandcommue.scraping.common.CommunityType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 @Builder(builderMethodName = "of") // 생성자 대신 빌더 패턴 사용
 //@ToString(exclude = {}) // 순환 참조 방지
 @EqualsAndHashCode(of = "id", callSuper = false) // 엔티티 식별자로 equals/hashCode 정의
+@EntityListeners(AuditingEntityListener.class)
 public class PostEntity {
     @Id
     @NanoId
@@ -27,7 +29,11 @@ public class PostEntity {
     @Column(name = "title")
     private String title;
 
-    @Column(name = "link_href", length = 1000)
+    @Column(name = "category_name")
+    private String categoryName;
+
+    @NonNull
+    @Column(name = "link_href", length = 1000, nullable = false)
     private String linkHref;
 
     @Column(name = "thumbnail_src", length = 1000)
@@ -35,6 +41,9 @@ public class PostEntity {
 
     @Column(name = "author_name")
     private String authorName;
+
+    @Column(name = "has_img")
+    private boolean hasImg;
 
     @Column(name = "like_count")
     private Integer likeCount;
@@ -45,7 +54,7 @@ public class PostEntity {
     @Column(name = "comment_count")
     private Integer commentCount;
 
-    @Column(name = "community_type")
+    @Column(name = "community_type", columnDefinition = "varchar(100)")
     @Enumerated(EnumType.STRING)
     private CommunityType communityType;
 
@@ -55,4 +64,8 @@ public class PostEntity {
     @CreatedDate
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
+
+    public String getKey() {
+        return postNo != null ? postNo : linkHref;
+    }
 }

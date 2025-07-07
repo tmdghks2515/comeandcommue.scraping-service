@@ -19,7 +19,7 @@ public class RedisConfig {
      * Object 저장용 RedisTemplate
      * (예: PostDto 객체, List, ZSet 등)
      */
-    @Bean(name = "customRedisTemplate")
+    /*@Bean(name = "customRedisTemplate")
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
@@ -32,13 +32,12 @@ public class RedisConfig {
         template.setHashValueSerializer(serializer);
 
         return template;
-    }
+    }*/
 
     /**
      * 단순 문자열용 RedisTemplate
      * (예: ID Set, 키 값 저장 등)
      */
-    @Bean(name = "customStringRedisTemplate")
     public RedisTemplate<String, String> stringRedisTemplate(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, String> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);

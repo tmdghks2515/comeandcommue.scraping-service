@@ -1,8 +1,9 @@
 package io.comeandcommue.scraping.domain.scrap;
 
-import java.time.Duration;
+
+import io.comeandcommue.scraping.common.CommunityType;
 
 public interface StoredKeyStore {
-    boolean exists(String key);
-    void save(String key, Duration ttl);
+    boolean exists(CommunityType commuType, String key);
+    void save(CommunityType commuType, String key);
 }

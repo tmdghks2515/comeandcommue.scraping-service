@@ -17,13 +17,9 @@ public class ScrapingScheduler {
     public void scrapHotPosts() {
         log.info("scrapHotPosts started");
         long start = System.currentTimeMillis();
-        int scrapPostsCount = scrapHotPostsUseCase.scrapHotPosts();
+        int count = scrapHotPostsUseCase.scrapHotPosts();
 
         long end = System.currentTimeMillis();
-        log.info("scrapHotPosts completed (took {} ms), scraped {} posts)", (end - start), scrapPostsCount);
-    }
-
-    @Scheduled(cron = "0 0 2 * * *")
-    public void deleteExpiredCache() {
+        log.info("scrapHotPosts completed (took {} ms), scraped {} posts)", (end - start), count);
     }
 }

@@ -14,9 +14,11 @@ public class PostDto {
     private String id;
     private String postNo;
     private String title;
+    private String categoryName;
     private String linkHref;
     private String thumbnailSrc;
     private String authorName;
+    private boolean hasImg;
     private Integer likeCount;
     private Integer viewCount;
     private Integer commentCount;
