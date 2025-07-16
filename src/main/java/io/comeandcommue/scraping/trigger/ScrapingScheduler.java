@@ -17,7 +17,7 @@ public class ScrapingScheduler {
     public void scrapHotPosts() {
         log.info("scrapHotPosts started");
         long start = System.currentTimeMillis();
-        int count = scrapHotPostsUseCase.scrapHotPosts();
+        int count = scrapHotPostsUseCase.scrapRealtimeHotPosts();
 
         long end = System.currentTimeMillis();
         log.info("scrapHotPosts completed (took {} ms), scraped {} posts)", (end - start), count);

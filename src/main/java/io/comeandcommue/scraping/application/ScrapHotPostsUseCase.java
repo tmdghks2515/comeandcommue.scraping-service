@@ -1,19 +1,18 @@
 package io.comeandcommue.scraping.application;
 
-import io.comeandcommue.scraping.common.CommunityType;
+import io.comeandcommue.scraping.common.ScrapTargetType;
 import io.comeandcommue.scraping.domain.post.PostEntity;
 import io.comeandcommue.scraping.domain.post.PostRepository;
+import io.comeandcommue.scraping.domain.scrap.ScrapInfoEntity;
+import io.comeandcommue.scraping.domain.scrap.ScrapInfoRepository;
 import io.comeandcommue.scraping.domain.scrap.ScrapService;
 import io.comeandcommue.scraping.domain.scrap.StoredKeyStore;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
-import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 @Transactional
@@ -24,10 +23,13 @@ public class ScrapHotPostsUseCase {
     private final ScrapService scrapService;
     private final StoredKeyStore storedKeyStore;
     private final PostRepository postRepository;
+    private final ScrapInfoRepository scrapInfoRepository;
 
-    public int scrapHotPosts() {
-        List<PostEntity> postsToSave = Arrays.stream(CommunityType.values())
-                .flatMap(this::scrapUnstoredPostsByCommunity)
+    public int scrapRealtimeHotPosts() {
+        List<ScrapInfoEntity> scrapInfoList = scrapInfoRepository.findAllByScrapTargetType(ScrapTargetType.REALTIME_HOT_POSTS);
+
+        List<PostEntity> postsToSave = scrapService.scrapRealtimeHotPosts(scrapInfoList)
+                .stream().filter(post -> !storedKeyStore.exists(post.getCommunityType(), post.getKey()))
                 .toList();
 
         List<PostEntity> savedPosts = postRepository.saveAll(postsToSave);
@@ -36,10 +38,5 @@ public class ScrapHotPostsUseCase {
         );
 
         return savedPosts.size();
-    }
-
-    private Stream<PostEntity> scrapUnstoredPostsByCommunity(CommunityType commuType) {
-        return scrapService.scrapPostsByCommuType(commuType).stream()
-                .filter(post -> !storedKeyStore.exists(commuType, post.getKey()));
     }
 }

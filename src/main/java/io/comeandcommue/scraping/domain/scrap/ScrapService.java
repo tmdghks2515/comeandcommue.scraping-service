@@ -1,6 +1,7 @@
 package io.comeandcommue.scraping.domain.scrap;
 
 import io.comeandcommue.scraping.common.CommunityType;
+import io.comeandcommue.scraping.common.ScrapProcessType;
 import io.comeandcommue.scraping.domain.post.PostEntity;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -25,6 +26,184 @@ import java.util.regex.Pattern;
 @Service
 public class ScrapService {
     private static final Logger log = LoggerFactory.getLogger(ScrapService.class);
+
+    public List<PostEntity> scrapRealtimeHotPosts(List<ScrapInfoEntity> scrapInfoList) {
+        List<PostEntity> posts = new ArrayList<>();
+
+        for (ScrapInfoEntity scrapInfo : scrapInfoList ) {
+            posts.addAll(scrapByScrapInfo(scrapInfo));
+        }
+
+        return posts;
+    }
+
+    private List<PostEntity> scrapByScrapInfo(ScrapInfoEntity scrapInfo) {
+        List<PostEntity> posts = new ArrayList<>();
+        try {
+            Document doc = makeJsoupConnection(scrapInfo.getTargetUrl());
+            Elements rows = doc.select(scrapInfo.getTargetRowSelector());
+
+            if (rows.isEmpty()) {
+                log.debug(
+                        "[ScrapService.scrapByScrapInfo] No rows found for scrap url {}, targetRowSelector {}",
+                        scrapInfo.getTargetUrl(),
+                        scrapInfo.getTargetRowSelector()
+                );
+                return posts;
+            }
+
+            for (Element row : rows) {
+                try {
+                    String postNo = null;
+                    String title = null;
+                    String categoryName = null;
+                    String linkHref = null;
+                    String thumbnailSrc = null;
+                    String authorName = null;
+                    Integer likeCount = null;
+                    Integer viewCount = null;
+                    Integer commentCount = null;
+                    LocalDateTime postedAt = null;
+
+                    for (ScrapPropertyEntity property : scrapInfo.getScrapProperties()) {
+                        String extractedValue = extractValue(row, property);
+                        switch (property.getPostPropertyType()) {
+                            case POST_NO -> postNo = extractedValue;
+                            case TITLE -> title = extractedValue;
+                            case CATEGORY_NAME -> categoryName = extractedValue;
+                            case AUTHOR_NAME ->  authorName = extractedValue;
+                            case LINK_HREF -> {
+                                if (extractedValue == null) break;
+                                String commuBaseUrl = scrapInfo.getCommunity().getBaseUrl();
+                                if (!extractedValue.contains(commuBaseUrl))
+                                    linkHref = extractedValue;
+                                else
+                                    linkHref = commuBaseUrl + extractedValue;
+                            }
+                            case THUMBNAIL_SRC -> thumbnailSrc = extractedValue;
+                            case LIKE_COUNT -> {
+                                if (extractedValue != null) {
+                                    likeCount = Integer.parseInt(extractedValue);
+                                }
+                            }
+                            case VIEW_COUNT -> {
+                                if (extractedValue != null) {
+                                    viewCount = Integer.parseInt(extractedValue);
+                                }
+                            }
+                            case COMMENT_COUNT -> {
+                                if (extractedValue != null) {
+                                    commentCount = Integer.parseInt(extractedValue);
+                                }
+                            }
+                            case POSTED_AT -> {
+                                if (extractedValue != null && property.getDateFormat() != null) {
+                                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(property.getDateFormat());
+                                    postedAt = LocalDateTime.parse(extractedValue, formatter);
+                                }
+                            }
+                        }
+                    }
+
+                    if (postNo == null || title == null || linkHref == null) {
+                        log.debug(
+                                "Skipping post due to missing required fields: postNo={}, title={}, linkHref={}",
+                                postNo, title, linkHref
+                        );
+                        continue; // 필수값이 없으면 해당 row는 무시
+                    }
+
+                    posts.add(
+                            PostEntity.of()
+                                    .postNo(postNo)
+                                    .title(title)
+                                    .categoryName(categoryName)
+                                    .linkHref(linkHref)
+                                    .authorName(authorName)
+                                    .thumbnailSrc(thumbnailSrc)
+                                    .viewCount(viewCount)
+                                    .likeCount(likeCount)
+                                    .commentCount(commentCount)
+                                    .communityType(scrapInfo.getCommunity().getCommunityType())
+                                    .postedAt(postedAt)
+                                    .build()
+                    );
+
+                } catch (Exception e) {
+                    log.debug("Error processing row: {}", e.getMessage());
+                }
+            }
+
+        } catch (Exception e) {
+            log.error("Error connecting to {}: {}", scrapInfo.getCommunity().getCommunityType(), e.getMessage());
+        }
+
+        return posts;
+    }
+
+    private String extractValue(Element row, ScrapPropertyEntity property) {
+        Element propertyElement = row.selectFirst(property.getSelector());
+        if (propertyElement == null) {
+            return null;
+        }
+        String value = switch (property.getExtractMethod()) {
+            case ATTR ->  propertyElement.attr(property.getAttrName());
+            case TEXT ->  propertyElement.text();
+            case OWN_TEXT ->   propertyElement.ownText();
+        };
+        if (value.isEmpty()) {
+            return null;
+        }
+
+        String processedValue = value;
+        if (!property.getScrapProcesses().isEmpty()) {
+            for (ScrapProcessEntity process : property.getScrapProcesses()) {
+                processedValue = processingValue(processedValue, process);
+            }
+        }
+
+        if (property.getAdDetectionRegex() != null) {
+            Matcher adMatcher = Pattern.compile(property.getAdDetectionRegex()).matcher(processedValue);
+            if (adMatcher.find()) {
+                throw new IllegalArgumentException("Detected ad content: " + processedValue);
+            }
+        }
+
+        return processedValue.trim();
+    }
+
+    private String processingValue(String originValue, ScrapProcessEntity process) {
+        String processedValue = originValue;
+        switch (process.getScrapProcessType()) {
+            case REPLACE_ALL -> {
+                if (process.getReplaceFrom() != null && process.getReplaceTo() != null) {
+                    processedValue = processedValue.replaceAll(process.getReplaceFrom(), process.getReplaceTo());
+                }
+            }
+            case MATCHER -> {
+                if (process.getMatcherRegex() != null) {
+                    Matcher matcher = Pattern.compile(process.getMatcherRegex()).matcher(processedValue);
+                    if (matcher.find()) {
+                        processedValue = matcher.group(process.getMatcherGroupNo());
+                    } else {
+                        processedValue = null; // 매칭 실패 시 null 처리
+                    }
+                }
+            }
+            case SPLIT -> {
+                if (process.getSplitStr() != null && process.getSplitIndex() != null) {
+                    String[] parts = processedValue.split(process.getSplitStr());
+                    if (parts.length > process.getSplitIndex()) {
+                        processedValue = parts[process.getSplitIndex()];
+                    } else {
+                        processedValue = null; // 인덱스 초과 시 null 처리
+                    }
+                }
+            }
+        }
+
+        return processedValue;
+    }
 
     public List<PostEntity> scrapPostsByCommuType(CommunityType commuType) {
         return switch(commuType) {
