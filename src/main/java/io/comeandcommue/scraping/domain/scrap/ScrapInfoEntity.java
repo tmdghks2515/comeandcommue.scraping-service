@@ -24,7 +24,7 @@ public class ScrapInfoEntity {
     @NanoId
     private String id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "community_type", nullable = false)
     private CommunityEntity community;
 
@@ -38,6 +38,6 @@ public class ScrapInfoEntity {
     @Column(name = "target_row_selector", nullable = false)
     private String targetRowSelector;
 
-    @OneToMany(mappedBy = "scrapInfo", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "scrapInfo", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<ScrapPropertyEntity> scrapProperties = new ArrayList<>();
 }

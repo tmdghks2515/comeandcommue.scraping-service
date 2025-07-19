@@ -24,7 +24,7 @@ public class ScrapPropertyEntity {
     @NanoId
     private String id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "scrap_info_id", nullable = false)
     private ScrapInfoEntity scrapInfo;
 
@@ -34,6 +34,9 @@ public class ScrapPropertyEntity {
 
     @Column(name = "selector", nullable = false)
     private String selector;
+
+    @Column(name = "select_idx")
+    private int selectIdx = 0;
 
     @Column(name = "extract_method", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -45,10 +48,16 @@ public class ScrapPropertyEntity {
     @Column(name = "ad_detection_regex")
     private String adDetectionRegex;
 
+    @Column(name = "property_skip_detection_regex")
+    private String propertySkipDetectionRegex;
+
     @Column(name = "date_format")
     private String dateFormat;
 
-    @OneToMany(mappedBy = "scrapProperty", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @Column(name = "date_format_2")
+    private String dateFormat2;
+
+    @OneToMany(mappedBy = "scrapProperty", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @OrderBy("processOrder ASC")
     private List<ScrapProcessEntity> scrapProcesses = new ArrayList<>();
 }

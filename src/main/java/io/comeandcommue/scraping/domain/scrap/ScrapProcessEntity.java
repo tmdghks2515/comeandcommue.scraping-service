@@ -20,7 +20,7 @@ public class ScrapProcessEntity {
     @NanoId
     private String id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "scrap_property_id", nullable = false)
     private ScrapPropertyEntity scrapProperty;
 
