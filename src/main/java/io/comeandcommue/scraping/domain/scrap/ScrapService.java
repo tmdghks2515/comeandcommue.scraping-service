@@ -1,21 +1,24 @@
 package io.comeandcommue.scraping.domain.scrap;
 
 import io.comeandcommue.scraping.domain.post.PostEntity;
+import io.github.bonigarcia.wdm.WebDriverManager;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +42,12 @@ public class ScrapService {
     private List<PostEntity> scrapByScrapInfo(ScrapInfoEntity scrapInfo) {
         List<PostEntity> posts = new ArrayList<>();
         try {
-            Document doc = makeJsoupConnection(scrapInfo.getTargetUrl());
+            Document doc;
+            if (scrapInfo.getCommunity().isUseSelenium())
+                doc = getTargetDocumentUsingSelenium(scrapInfo);
+            else
+                doc = getTargetDocumentUsingJsoup(scrapInfo);
+
             Elements rows = doc.select(scrapInfo.getTargetRowSelector());
 
             if (rows.isEmpty()) {
@@ -73,9 +81,11 @@ public class ScrapService {
                             case AUTHOR_NAME ->  authorName = extractedValue;
                             case LINK_HREF -> {
                                 if (extractedValue == null) break;
-                                String commuBaseUrl = scrapInfo.getCommunity().getBaseUrl();
-                                if (!extractedValue.contains(commuBaseUrl))
-                                    linkHref = commuBaseUrl + extractedValue;
+                                String baseUrl = scrapInfo.getCommunity().getPostBaseUrl() != null
+                                        ? scrapInfo.getCommunity().getPostBaseUrl()
+                                        : scrapInfo.getCommunity().getBaseUrl();
+                                if (!extractedValue.contains(baseUrl))
+                                    linkHref = baseUrl + extractedValue;
                                 else
                                     linkHref = extractedValue;
                             }
@@ -250,19 +260,9 @@ public class ScrapService {
         return datetime;
     }
 
-    private Document makeJsoupConnection(String url) throws IOException {
-        // 1. Selenium으로 브라우저 열기
-//        WebDriver driver = new ChromeDriver();
-//        driver.get(url);
-//
-//        // 2. 쿠키 수집 (JS 실행 이후 자동 설정된 쿠키 포함)
-//        Set<Cookie> seleniumCookies = driver.manage().getCookies();
-//        Map<String, String> cookieMap = seleniumCookies.stream()
-//                .collect(Collectors.toMap(Cookie::getName, Cookie::getValue));
-
-        Document doc = Jsoup.connect(url)
+    private Document getTargetDocumentUsingJsoup(ScrapInfoEntity scrapInfo) throws IOException {
+        return Jsoup.connect(scrapInfo.getTargetUrl())
                 .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36")
-//                .cookies(cookieMap)
                 .referrer("https://www.google.com/")
                 .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8")
                 .header("Accept-Language", "ko,en-US;q=0.9,en;q=0.8")
@@ -270,8 +270,47 @@ public class ScrapService {
                 .timeout(10000)
                 .method(Connection.Method.GET)
                 .get();
+    }
 
-//        driver.quit();
+    private Document getTargetDocumentUsingSelenium(ScrapInfoEntity scrapInfo) {
+        String url = scrapInfo.getTargetUrl();
+        boolean isDynamicRendering = scrapInfo.getCommunity().isDynamicRendering();
+
+        // ① 드라이버 자동 설정
+        WebDriverManager.chromedriver().setup();
+
+        // ② 옵션 설정 (헤드리스 모드 포함 가능)
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless=new");
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--remote-allow-origins=*");
+        options.addArguments("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36");
+
+        // ③ WebDriver 실행
+        WebDriver driver = new ChromeDriver(options);
+
+        Document doc;
+        try {
+            // ④ 스크래핑할 URL 접속
+            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+            driver.get(url);
+
+            // ⑤ 자바스크립트 렌더링 기다리기 (예: 인기 게시글 목록이 생길 때까지 대기)
+            if (isDynamicRendering) {
+                WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+                wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(scrapInfo.getTargetRowSelector())));
+            }
+
+            // 전체 렌더링된 HTML을 직접 가져오기
+            String pageSource = driver.getPageSource();
+            if (pageSource != null)
+                doc = Jsoup.parse(pageSource);
+            else
+                doc = null;
+        } finally {
+            driver.quit();
+        }
 
         return doc;
     }

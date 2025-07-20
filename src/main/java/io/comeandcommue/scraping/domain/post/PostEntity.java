@@ -42,9 +42,6 @@ public class PostEntity {
     @Column(name = "author_name")
     private String authorName;
 
-    @Column(name = "has_img")
-    private boolean hasImg;
-
     @Column(name = "like_count")
     private Integer likeCount;
 

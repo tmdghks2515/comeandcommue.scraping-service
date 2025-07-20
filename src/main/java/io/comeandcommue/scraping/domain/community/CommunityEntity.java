@@ -24,6 +24,15 @@ public class CommunityEntity {
     @Column(name = "base_url")
     private String baseUrl;
 
+    @Column(name = "post_base_url")
+    private String postBaseUrl;
+
     @Column(name = "has_img_permission")
     private boolean hasImgPermission;
+
+    @Column(name = "is_dynamic_rendering")
+    private boolean isDynamicRendering;
+
+    @Column(name = "use_selenium")
+    private boolean useSelenium;
 }
