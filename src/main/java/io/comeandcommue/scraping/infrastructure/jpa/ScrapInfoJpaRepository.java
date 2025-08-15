@@ -1,4 +1,4 @@
-package io.comeandcommue.scraping.infrastructure.repository;
+package io.comeandcommue.scraping.infrastructure.jpa;
 
 import io.comeandcommue.scraping.common.ScrapTargetType;
 import io.comeandcommue.scraping.domain.scrap.ScrapInfoEntity;

@@ -1,7 +1,6 @@
 package io.comeandcommue.scraping.domain.scrap;
 
 import io.comeandcommue.scraping.domain.post.PostEntity;
-import io.github.bonigarcia.wdm.WebDriverManager;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -277,7 +276,7 @@ public class ScrapService {
         boolean isDynamicRendering = scrapInfo.getCommunity().isDynamicRendering();
 
         // ① 드라이버 자동 설정
-        WebDriverManager.chromedriver().setup();
+        // WebDriverManager.chromedriver().setup();
 
         // ② 옵션 설정 (헤드리스 모드 포함 가능)
         ChromeOptions options = new ChromeOptions();

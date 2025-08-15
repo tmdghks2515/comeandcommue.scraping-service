@@ -31,9 +31,8 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("com.aventrix.jnanoid:jnanoid:2.0.0")
 	// Selenium Java
-	implementation("org.seleniumhq.selenium:selenium-java:4.19.1")
-	// (선택) WebDriverManager: 자동으로 ChromeDriver 등 설치/버전 관리해주는 라이브러리
-	implementation("io.github.bonigarcia:webdrivermanager:5.2.0")
+	implementation("org.seleniumhq.selenium:selenium-java:4.21.0")
+	implementation("com.auth0:java-jwt:4.4.0")
 	compileOnly("org.projectlombok:lombok")
 	runtimeOnly("org.postgresql:postgresql")
 	annotationProcessor("org.projectlombok:lombok")

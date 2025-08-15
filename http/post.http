@@ -1,0 +1,5 @@
+### hit post
+POST http://localhost:8080/api/post/interaction/hit/zfzDQ3kdoZz
+
+### like post
+POST http://localhost:8080/api/post/interaction/like/zfzDQ3kdoZz
