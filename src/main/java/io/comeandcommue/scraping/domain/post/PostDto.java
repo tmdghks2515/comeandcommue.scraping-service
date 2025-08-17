@@ -18,9 +18,8 @@ public class PostDto {
     private String linkHref;
     private String thumbnailSrc;
     private String authorName;
-    private Integer likeCount;
-    private Integer viewCount;
-    private Integer commentCount;
+    private int likeCount;
+    private int hitCount;
     private CommunityType communityType;
     private LocalDateTime postedAt;
     private LocalDateTime createdAt;

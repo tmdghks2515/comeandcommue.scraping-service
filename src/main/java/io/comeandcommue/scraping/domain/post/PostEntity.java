@@ -43,13 +43,7 @@ public class PostEntity {
     private String authorName;
 
     @Column(name = "like_count")
-    private Integer likeCount;
-
-    @Column(name = "view_count")
-    private Integer viewCount;
-
-    @Column(name = "comment_count")
-    private Integer commentCount;
+    private int likeCount;
 
     @Column(name = "hit_count")
     private int hitCount = 0;
@@ -71,5 +65,13 @@ public class PostEntity {
 
     public void hitted() {
         hitCount++;
+    }
+
+    public void liked() {
+        likeCount++;
+    }
+
+    public void likeCanceled() {
+        likeCount--;
     }
 }

@@ -66,7 +66,6 @@ public class ScrapService {
                     String linkHref = null;
                     String thumbnailSrc = null;
                     String authorName = null;
-                    Integer likeCount = null;
                     Integer viewCount = null;
                     Integer commentCount = null;
                     LocalDateTime postedAt = null;
@@ -89,21 +88,6 @@ public class ScrapService {
                                     linkHref = extractedValue;
                             }
                             case THUMBNAIL_SRC -> thumbnailSrc = extractedValue;
-                            case LIKE_COUNT -> {
-                                if (extractedValue != null) {
-                                    likeCount = Integer.parseInt(extractedValue);
-                                }
-                            }
-                            case VIEW_COUNT -> {
-                                if (extractedValue != null) {
-                                    viewCount = Integer.parseInt(extractedValue);
-                                }
-                            }
-                            case COMMENT_COUNT -> {
-                                if (extractedValue != null) {
-                                    commentCount = Integer.parseInt(extractedValue);
-                                }
-                            }
                             case POSTED_AT -> {
                                 if (extractedValue != null && property.getDateFormat() != null) {
                                     postedAt = formatDateTime(extractedValue, property.getDateFormat());
@@ -131,9 +115,6 @@ public class ScrapService {
                                     .linkHref(linkHref)
                                     .authorName(authorName)
                                     .thumbnailSrc(thumbnailSrc)
-                                    .viewCount(viewCount)
-                                    .likeCount(likeCount)
-                                    .commentCount(commentCount)
                                     .communityType(scrapInfo.getCommunity().getCommunityType())
                                     .postedAt(postedAt)
                                     .build()

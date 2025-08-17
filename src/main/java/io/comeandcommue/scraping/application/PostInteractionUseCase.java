@@ -22,17 +22,21 @@ public class PostInteractionUseCase {
         postRepository.save(post);
     }
 
-    public void likePost(PostLikeId postLikeId) {
+    public boolean likePost(PostLikeId postLikeId) {
         PostEntity post = postRepository.findById(postLikeId.getPostId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글 입니다."));
 
-        if (postRepository.existsPostLikeById(postLikeId)) {
+        if (!postRepository.existsPostLikeById(postLikeId)) {
             PostLikeEntity postLike = PostLikeEntity.of()
                     .id(postLikeId)
                     .build();
             postRepository.savePostLike(postLike);
+            post.liked();
+            return true;
         } else {
             postRepository.deletePostLikeById(postLikeId);
+            post.likeCanceled();
+            return false;
         }
     }
 }

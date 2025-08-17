@@ -17,15 +17,16 @@ import org.springframework.web.bind.annotation.RestController;
 public class InteractionController {
     private final PostInteractionUseCase  postInteractionUseCase;
 
-    @PostMapping("/hit/{postId}")
+    @PostMapping("/{postId}/hit")
     public ResponseEntity<Void> hitPost(@PathVariable String postId) {
         postInteractionUseCase.hitPost(postId);
         return  ResponseEntity.ok().build();
     }
 
-    @PostMapping("/like/{postId}")
-    public ResponseEntity<Void> likePost(@PathVariable String postId, @LoginUser UserPrincipal user) {
-        postInteractionUseCase.likePost(new PostLikeId(postId, user.id()));
-        return  ResponseEntity.ok().build();
+    @PostMapping("/{postId}/like")
+    public ResponseEntity<Boolean> likePost(@PathVariable String postId, @LoginUser UserPrincipal user) {
+        return  ResponseEntity.ok(
+                postInteractionUseCase.likePost(new PostLikeId(postId, user.id()))
+        );
     }
 }
