@@ -1,4 +1,4 @@
-package io.comeandcommue.scraping.common;
+package io.comeandcommue.scraping.common.nanoId;
 
 import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;

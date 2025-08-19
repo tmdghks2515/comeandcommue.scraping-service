@@ -1,7 +1,6 @@
 package io.comeandcommue.scraping.domain.community;
 
-import io.comeandcommue.scraping.common.CommunityType;
-import io.comeandcommue.scraping.common.NanoId;
+import io.comeandcommue.scraping.common.enums.CommunityType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;

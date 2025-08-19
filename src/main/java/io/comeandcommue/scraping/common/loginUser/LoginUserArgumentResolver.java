@@ -1,5 +1,6 @@
-package io.comeandcommue.scraping.common;
+package io.comeandcommue.scraping.common.loginUser;
 
+import io.comeandcommue.scraping.common.enums.DeviceType;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;

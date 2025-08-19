@@ -1,4 +1,6 @@
-package io.comeandcommue.scraping.common;
+package io.comeandcommue.scraping.common.loginUser;
+
+import io.comeandcommue.scraping.common.enums.DeviceType;
 
 public record UserPrincipal(
         String id,

@@ -1,4 +1,4 @@
-package io.comeandcommue.scraping.common;
+package io.comeandcommue.scraping.common.loginUser;
 
 import org.springframework.stereotype.Component;
 import com.auth0.jwt.JWT;

@@ -1,7 +1,7 @@
 package io.comeandcommue.scraping.domain.post;
 
-import io.comeandcommue.scraping.common.NanoId;
-import io.comeandcommue.scraping.common.CommunityType;
+import io.comeandcommue.scraping.common.nanoId.NanoId;
+import io.comeandcommue.scraping.common.enums.CommunityType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;

@@ -1,6 +1,6 @@
 package io.comeandcommue.scraping.domain.scrap;
 
-import io.comeandcommue.scraping.common.ScrapTargetType;
+import io.comeandcommue.scraping.common.enums.ScrapTargetType;
 
 import java.util.List;
 

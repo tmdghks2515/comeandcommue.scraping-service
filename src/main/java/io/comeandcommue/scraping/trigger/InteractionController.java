@@ -1,8 +1,8 @@
 package io.comeandcommue.scraping.trigger;
 
 import io.comeandcommue.scraping.application.PostInteractionUseCase;
-import io.comeandcommue.scraping.common.LoginUser;
-import io.comeandcommue.scraping.common.UserPrincipal;
+import io.comeandcommue.scraping.common.loginUser.LoginUser;
+import io.comeandcommue.scraping.common.loginUser.UserPrincipal;
 import io.comeandcommue.scraping.domain.post.PostLikeId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

@@ -1,6 +1,6 @@
 package io.comeandcommue.scraping.infrastructure.redis;
 
-import io.comeandcommue.scraping.common.CommunityType;
+import io.comeandcommue.scraping.common.enums.CommunityType;
 import io.comeandcommue.scraping.domain.scrap.StoredKeyStore;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;

@@ -1,4 +1,4 @@
-package io.comeandcommue.scraping.common;
+package io.comeandcommue.scraping.common.loginUser;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -1,6 +1,6 @@
 package io.comeandcommue.scraping.domain.post;
 
-import io.comeandcommue.scraping.common.CommunityType;
+import io.comeandcommue.scraping.common.enums.CommunityType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

@@ -1,4 +1,4 @@
-package io.comeandcommue.scraping.common;
+package io.comeandcommue.scraping.common.nanoId;
 
 import org.hibernate.annotations.IdGeneratorType;
 

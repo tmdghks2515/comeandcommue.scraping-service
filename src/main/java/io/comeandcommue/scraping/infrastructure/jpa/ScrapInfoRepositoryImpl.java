@@ -1,6 +1,6 @@
 package io.comeandcommue.scraping.infrastructure.jpa;
 
-import io.comeandcommue.scraping.common.ScrapTargetType;
+import io.comeandcommue.scraping.common.enums.ScrapTargetType;
 import io.comeandcommue.scraping.domain.scrap.ScrapInfoEntity;
 import io.comeandcommue.scraping.domain.scrap.ScrapInfoRepository;
 import lombok.RequiredArgsConstructor;

@@ -1,8 +1,8 @@
 package io.comeandcommue.scraping.domain.scrap;
 
-import io.comeandcommue.scraping.common.ExtractMethod;
-import io.comeandcommue.scraping.common.NanoId;
-import io.comeandcommue.scraping.common.PostPropertyType;
+import io.comeandcommue.scraping.common.enums.ExtractMethod;
+import io.comeandcommue.scraping.common.nanoId.NanoId;
+import io.comeandcommue.scraping.common.enums.PostPropertyType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;

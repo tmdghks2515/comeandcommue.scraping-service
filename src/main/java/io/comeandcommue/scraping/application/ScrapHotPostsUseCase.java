@@ -1,6 +1,6 @@
 package io.comeandcommue.scraping.application;
 
-import io.comeandcommue.scraping.common.ScrapTargetType;
+import io.comeandcommue.scraping.common.enums.ScrapTargetType;
 import io.comeandcommue.scraping.domain.post.PostEntity;
 import io.comeandcommue.scraping.domain.post.PostRepository;
 import io.comeandcommue.scraping.domain.scrap.ScrapInfoEntity;

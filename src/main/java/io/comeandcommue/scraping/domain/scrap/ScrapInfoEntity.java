@@ -1,7 +1,7 @@
 package io.comeandcommue.scraping.domain.scrap;
 
-import io.comeandcommue.scraping.common.NanoId;
-import io.comeandcommue.scraping.common.ScrapTargetType;
+import io.comeandcommue.scraping.common.nanoId.NanoId;
+import io.comeandcommue.scraping.common.enums.ScrapTargetType;
 import io.comeandcommue.scraping.domain.community.CommunityEntity;
 import jakarta.persistence.*;
 import lombok.*;
