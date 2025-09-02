@@ -1,4 +1,4 @@
-package io.comeandcommue.scraping.application;
+package io.comeandcommue.scraping.application.usecase;
 
 import io.comeandcommue.scraping.domain.post.PostEntity;
 import io.comeandcommue.scraping.domain.post.PostLikeEntity;
@@ -38,5 +38,13 @@ public class PostInteractionUseCase {
             post.likeCanceled();
             return false;
         }
+    }
+
+    public void increaseCommentCount(String postId) {
+        PostEntity post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글 입니다."));
+
+        post.commented();
+        postRepository.save(post);
     }
 }

@@ -48,6 +48,9 @@ public class PostEntity {
     @Column(name = "hit_count")
     private int hitCount = 0;
 
+    @Column(name = "comment_count")
+    private int commentCount = 0;
+
     @Column(name = "community_type", columnDefinition = "varchar(100)")
     @Enumerated(EnumType.STRING)
     private CommunityType communityType;
@@ -73,5 +76,9 @@ public class PostEntity {
 
     public void likeCanceled() {
         likeCount--;
+    }
+
+    public void commented() {
+        commentCount++;
     }
 }

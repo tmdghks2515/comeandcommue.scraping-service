@@ -1,6 +1,6 @@
 package io.comeandcommue.scraping.trigger;
 
-import io.comeandcommue.scraping.application.PostInteractionUseCase;
+import io.comeandcommue.scraping.application.usecase.PostInteractionUseCase;
 import io.comeandcommue.scraping.common.loginUser.LoginUser;
 import io.comeandcommue.scraping.common.loginUser.UserPrincipal;
 import io.comeandcommue.scraping.domain.post.PostLikeId;

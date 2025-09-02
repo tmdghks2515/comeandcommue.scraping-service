@@ -1,4 +1,4 @@
-package io.comeandcommue.scraping.application;
+package io.comeandcommue.scraping.application.usecase;
 
 import io.comeandcommue.scraping.common.enums.ScrapTargetType;
 import io.comeandcommue.scraping.domain.post.PostEntity;

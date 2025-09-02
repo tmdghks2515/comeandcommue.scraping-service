@@ -1,6 +1,6 @@
 package io.comeandcommue.scraping.trigger;
 
-import io.comeandcommue.scraping.application.ScrapHotPostsUseCase;
+import io.comeandcommue.scraping.application.usecase.ScrapHotPostsUseCase;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
