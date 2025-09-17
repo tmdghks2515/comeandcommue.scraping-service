@@ -1,6 +1,6 @@
 package io.comeandcommue.scraping.domain.scrap;
 
-import io.comeandcommue.scraping.common.nanoId.NanoId;
+import io.comeandcommue.lib.web.shortId.ShortId;
 import io.comeandcommue.scraping.common.enums.ScrapTargetType;
 import io.comeandcommue.scraping.domain.community.CommunityEntity;
 import jakarta.persistence.*;
@@ -21,7 +21,7 @@ import java.util.List;
 @EntityListeners(AuditingEntityListener.class)
 public class ScrapInfoEntity {
     @Id
-    @NanoId
+    @ShortId
     private String id;
 
     @ManyToOne

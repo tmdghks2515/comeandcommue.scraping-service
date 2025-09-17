@@ -1,6 +1,6 @@
 package io.comeandcommue.scraping.domain.scrap;
 
-import io.comeandcommue.scraping.common.nanoId.NanoId;
+import io.comeandcommue.lib.web.shortId.ShortId;
 import io.comeandcommue.scraping.common.enums.ScrapProcessType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -17,7 +17,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 public class ScrapProcessEntity {
     @Id
-    @NanoId
+    @ShortId
     private String id;
 
     @ManyToOne

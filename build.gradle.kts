@@ -21,6 +21,7 @@ configurations {
 
 repositories {
 	mavenCentral()
+	mavenLocal()
 	maven {
 		name = "GitHubPackages"
 		url = uri("https://maven.pkg.github.com/tmdghks2515/comeandcommue.lib.web-lib")
@@ -30,7 +31,6 @@ repositories {
 			 password = (findProperty("gpr.key") as String?) ?: System.getenv("GITHUB_TOKEN")
 		}
 	}
-	mavenLocal()
 }
 
 dependencies {

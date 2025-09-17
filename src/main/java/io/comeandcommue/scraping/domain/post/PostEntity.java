@@ -1,6 +1,6 @@
 package io.comeandcommue.scraping.domain.post;
 
-import io.comeandcommue.scraping.common.nanoId.NanoId;
+import io.comeandcommue.lib.web.shortId.ShortId;
 import io.comeandcommue.scraping.common.enums.CommunityType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 public class PostEntity {
     @Id
-    @NanoId
+    @ShortId
     private String id;
 
     @Column(name = "post_no")
