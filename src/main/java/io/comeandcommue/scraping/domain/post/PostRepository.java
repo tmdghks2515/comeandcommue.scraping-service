@@ -4,12 +4,12 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PostRepository {
-    /************************ PostEntity ********************************/
+    /**** PostEntity *****/
     Optional<PostEntity> findById(String id);
     PostEntity save(PostEntity postEntity);
     List<PostEntity> saveAll(List<PostEntity> postEntityList);
 
-    /************************ PostLikeEntity ********************************/
+    /**** PostLikeEntity *****/
     boolean existsPostLikeById(PostLikeId id);
     PostLikeEntity savePostLike(PostLikeEntity postLikeEntity);
     void deletePostLikeById(PostLikeId id);

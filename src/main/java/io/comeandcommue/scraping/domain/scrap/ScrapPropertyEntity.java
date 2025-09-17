@@ -35,9 +35,11 @@ public class ScrapPropertyEntity {
     @Column(name = "selector", nullable = false)
     private String selector;
 
+    @Builder.Default
     @Column(name = "select_idx")
     private int selectIdx = 0;
 
+    @Builder.Default
     @Column(name = "extract_method", nullable = false)
     @Enumerated(EnumType.STRING)
     private ExtractMethod extractMethod = ExtractMethod.TEXT;
@@ -57,6 +59,7 @@ public class ScrapPropertyEntity {
     @Column(name = "date_format_2")
     private String dateFormat2;
 
+    @Builder.Default
     @OneToMany(mappedBy = "scrapProperty", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @OrderBy("processOrder ASC")
     private List<ScrapProcessEntity> scrapProcesses = new ArrayList<>();

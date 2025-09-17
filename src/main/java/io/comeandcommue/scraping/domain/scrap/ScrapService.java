@@ -21,6 +21,7 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,13 +30,56 @@ public class ScrapService {
     private static final Logger log = LoggerFactory.getLogger(ScrapService.class);
 
     public List<PostEntity> scrapRealtimeHotPosts(List<ScrapInfoEntity> scrapInfoList) {
-        List<PostEntity> posts = new ArrayList<>();
+        if (scrapInfoList == null || scrapInfoList.isEmpty()) return List.of();
 
-        for (ScrapInfoEntity scrapInfo : scrapInfoList ) {
-            posts.addAll(scrapByScrapInfo(scrapInfo));
+        // 1) 버추얼 스레드 + 읽기 쉬운 스레드명
+        ThreadFactory tf = Thread.ofVirtual().name("scraper-", 0).factory();
+        try (ExecutorService exec = Executors.newThreadPerTaskExecutor(tf)) {
+            // 2) Selenium 동시성 제한 (무겁기 때문)
+            final Semaphore seleniumGate = new Semaphore(1);
+
+            // 3) 제출
+            List<Future<List<PostEntity>>> futures = new ArrayList<>(scrapInfoList.size());
+            for (ScrapInfoEntity scrapInfo : scrapInfoList) {
+                futures.add(exec.submit(() -> {
+                    boolean usesSelenium = false;
+                    try {
+                        usesSelenium = scrapInfo.getCommunity() != null
+                                && scrapInfo.getCommunity().isUseSelenium();
+
+                        if (usesSelenium) seleniumGate.acquire();
+                        // 기존 단일 처리 메서드 재사용
+                        return scrapByScrapInfo(scrapInfo);
+                    } catch (Exception e) {
+                        log.error("[SCRAPER] failed: " + e);
+                        return List.of();
+                    } finally {
+                        if (usesSelenium) seleniumGate.release();
+                    }
+                }));
+            }
+
+            // 4) 수집 (타임아웃/취소 처리)
+            List<PostEntity> all = new ArrayList<>();
+            for (Future<List<PostEntity>> f : futures) {
+                try {
+                    List<PostEntity> partial = f.get(Duration.ofSeconds(10L).toMillis(), TimeUnit.MILLISECONDS);
+                    if (partial != null && !partial.isEmpty()) all.addAll(partial);
+                } catch (TimeoutException te) {
+                    f.cancel(true);  // 작업 취소
+                    log.error("[SCRAPER] timeout -> task cancelled");
+                } catch (ExecutionException ee) {
+                    log.error("[SCRAPER] task error: " + ee.getCause());
+                } catch (InterruptedException ie) {
+                    // 인터럽트 상태 복구
+                    Thread.currentThread().interrupt();
+                    log.warn("[SCRAPER] current thread was interrupted, stopping collection", ie);
+                    return all; // 상위로 빠져나도록
+                }
+            }
+
+            return all;
         }
-
-        return posts;
     }
 
     private List<PostEntity> scrapByScrapInfo(ScrapInfoEntity scrapInfo) {

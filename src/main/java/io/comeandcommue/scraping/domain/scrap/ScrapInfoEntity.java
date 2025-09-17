@@ -38,6 +38,7 @@ public class ScrapInfoEntity {
     @Column(name = "target_row_selector", nullable = false)
     private String targetRowSelector;
 
+    @Builder.Default
     @OneToMany(mappedBy = "scrapInfo", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<ScrapPropertyEntity> scrapProperties = new ArrayList<>();
 }

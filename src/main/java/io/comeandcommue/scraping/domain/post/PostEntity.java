@@ -45,9 +45,11 @@ public class PostEntity {
     @Column(name = "like_count")
     private int likeCount;
 
+    @Builder.Default
     @Column(name = "hit_count")
     private int hitCount = 0;
 
+    @Builder.Default
     @Column(name = "comment_count")
     private int commentCount = 0;
 

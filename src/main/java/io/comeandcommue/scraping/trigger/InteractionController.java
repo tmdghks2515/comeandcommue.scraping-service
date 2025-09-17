@@ -1,9 +1,9 @@
 package io.comeandcommue.scraping.trigger;
 
 import io.comeandcommue.scraping.application.usecase.PostInteractionUseCase;
-import io.comeandcommue.scraping.common.loginUser.LoginUser;
-import io.comeandcommue.scraping.common.loginUser.UserPrincipal;
+import io.comeandcommue.lib.web.loginUser.LoginUser;
 import io.comeandcommue.scraping.domain.post.PostLikeId;
+import io.comeandcommue.lib.web.loginUser.UserPrincipal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;

@@ -1,6 +1,6 @@
-package io.comeandcommue.scraping.common.config;
+package io.comeandcommue.scraping.infrastructure.config;
 
-import io.comeandcommue.scraping.common.loginUser.LoginUserArgumentResolver;
+import io.comeandcommue.lib.web.loginUser.LoginUserArgumentResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
