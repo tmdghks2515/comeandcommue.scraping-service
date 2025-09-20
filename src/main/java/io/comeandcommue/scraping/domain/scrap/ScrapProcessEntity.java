@@ -1,6 +1,7 @@
 package io.comeandcommue.scraping.domain.scrap;
 
-import io.comeandcommue.lib.web.shortId.ShortId;
+import io.comeandcommue.lib.data.baseEntity.BaseEntity;
+import io.comeandcommue.lib.data.shortId.ShortId;
 import io.comeandcommue.scraping.common.enums.ScrapProcessType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -15,7 +16,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 //@ToString(exclude = {}) // 순환 참조 방지
 @EqualsAndHashCode(of = "id", callSuper = false) // 엔티티 식별자로 equals/hashCode 정의
 @EntityListeners(AuditingEntityListener.class)
-public class ScrapProcessEntity {
+public class ScrapProcessEntity extends BaseEntity {
     @Id
     @ShortId
     private String id;

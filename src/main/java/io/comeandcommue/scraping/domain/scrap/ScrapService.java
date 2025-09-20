@@ -112,7 +112,7 @@ public class ScrapService {
                     String authorName = null;
                     Integer viewCount = null;
                     Integer commentCount = null;
-                    LocalDateTime postedAt = null;
+                    Instant postedAt = null;
 
                     for (ScrapPropertyEntity property : scrapInfo.getScrapProperties()) {
                         String extractedValue = extractValue(row, property);
@@ -254,34 +254,39 @@ public class ScrapService {
         return processedValue;
     }
 
-    private LocalDateTime formatDateTime(String value, String format) {
-        LocalDateTime datetime = null;
-        LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
+    private Instant formatDateTime(String value, String format) {
+        Instant instant = null;
+        ZoneId zone = ZoneId.of("Asia/Seoul");
+        LocalDate today = LocalDate.now(zone);
+
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
 
             // 날짜/시간 모두 존재
             if ((format.contains("D") || format.contains("d")) && (format.contains("H") || format.contains("h"))) {
-                datetime = LocalDateTime.parse(value, formatter)
+                LocalDateTime dateTime = LocalDateTime.parse(value, formatter)
                         .withYear(today.getYear());
+                instant = dateTime.atZone(zone).toInstant();
             }
             // 시간만 존재
             else if (format.contains("H") || format.contains("h")) {
                 LocalTime time = LocalTime.parse(value, formatter);
-                datetime = LocalDateTime.of(today, time);
+                LocalDateTime dateTime = LocalDateTime.of(today, time);
+                instant = dateTime.atZone(zone).toInstant();
             }
             // 날짜만 존재
             else if (format.contains("D") || format.contains("d")) {
-                datetime = LocalDate.parse(value, formatter)
-                        .withYear(today.getYear())
-                        .atStartOfDay();
+                LocalDate date = LocalDate.parse(value, formatter)
+                        .withYear(today.getYear());
+                LocalDateTime dateTime = date.atStartOfDay();
+                instant = dateTime.atZone(zone).toInstant();
             }
             else throw new IllegalArgumentException();
         } catch (RuntimeException e) {
             log.info("Error formatting date: {}, format: {}", value, format);
         }
 
-        return datetime;
+        return instant;
     }
 
     private Document getTargetDocumentUsingJsoup(ScrapInfoEntity scrapInfo) throws IOException {

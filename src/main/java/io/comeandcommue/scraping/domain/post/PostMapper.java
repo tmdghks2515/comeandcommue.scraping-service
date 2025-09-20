@@ -20,23 +20,4 @@ public class PostMapper {
                 .createdAt(entity.getCreatedAt())
                 .build();
     }
-
-    public static PostEntity toEntity(PostDto dto) {
-        if (dto == null) return null;
-
-        return PostEntity.of()
-                .id(dto.getId())
-                .postNo(dto.getPostNo())
-                .title(dto.getTitle())
-                .categoryName(dto.getCategoryName())
-                .linkHref(dto.getLinkHref())
-                .thumbnailSrc(dto.getThumbnailSrc())
-                .authorName(dto.getAuthorName())
-                .likeCount(dto.getLikeCount())
-                .hitCount(dto.getHitCount())
-                .communityType(dto.getCommunityType())
-                .postedAt(dto.getPostedAt())
-                .createdAt(dto.getCreatedAt())
-                .build();
-    }
 }

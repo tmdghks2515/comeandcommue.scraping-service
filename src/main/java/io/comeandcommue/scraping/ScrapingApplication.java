@@ -1,5 +1,7 @@
 package io.comeandcommue.scraping;
 
+import io.comeandcommue.lib.data.auditor.EnableAuditorAware;
+import io.comeandcommue.lib.web.exception.EnableGlobalExceptionHandling;
 import jakarta.annotation.PostConstruct;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -12,9 +14,12 @@ import java.util.TimeZone;
 @SpringBootApplication
 @EnableScheduling
 @EnableJpaAuditing
+@EnableAuditorAware
+@EnableGlobalExceptionHandling
 @ComponentScan(basePackages = {
 		"io.comeandcommue.scraping",
-		"io.comeandcommue.lib.web"
+		"io.comeandcommue.lib.web",
+		"io.comeandcommue.lib.data"
 })
 public class ScrapingApplication {
 

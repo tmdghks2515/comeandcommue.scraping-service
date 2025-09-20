@@ -1,5 +1,6 @@
 package io.comeandcommue.scraping.domain.community;
 
+import io.comeandcommue.lib.data.baseEntity.BaseEntity;
 import io.comeandcommue.scraping.common.enums.CommunityType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -14,7 +15,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 //@ToString(exclude = {}) // 순환 참조 방지
 @EqualsAndHashCode(of = "communityType", callSuper = false) // 엔티티 식별자로 equals/hashCode 정의
 @EntityListeners(AuditingEntityListener.class)
-public class CommunityEntity {
+public class CommunityEntity extends BaseEntity {
     @Id
     @Column(name = "community_type")
     @Enumerated(EnumType.STRING)

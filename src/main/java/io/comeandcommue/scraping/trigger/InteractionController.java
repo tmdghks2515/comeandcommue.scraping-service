@@ -1,9 +1,9 @@
 package io.comeandcommue.scraping.trigger;
 
-import io.comeandcommue.scraping.application.usecase.PostInteractionUseCase;
 import io.comeandcommue.lib.web.loginUser.LoginUser;
+import io.comeandcommue.lib.web.loginUser.ResolvedLoginUser;
+import io.comeandcommue.scraping.application.usecase.PostInteractionUseCase;
 import io.comeandcommue.scraping.domain.post.PostLikeId;
-import io.comeandcommue.lib.web.loginUser.UserPrincipal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,9 +24,9 @@ public class InteractionController {
     }
 
     @PostMapping("/{postId}/like")
-    public ResponseEntity<Boolean> likePost(@PathVariable String postId, @LoginUser UserPrincipal user) {
+    public ResponseEntity<Boolean> likePost(@PathVariable String postId, @ResolvedLoginUser LoginUser loginUser) {
         return  ResponseEntity.ok(
-                postInteractionUseCase.likePost(new PostLikeId(postId, user.id()))
+                postInteractionUseCase.likePost(new PostLikeId(postId, loginUser.id()))
         );
     }
 }

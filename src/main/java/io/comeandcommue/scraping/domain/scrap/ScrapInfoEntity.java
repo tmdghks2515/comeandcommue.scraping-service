@@ -1,6 +1,7 @@
 package io.comeandcommue.scraping.domain.scrap;
 
-import io.comeandcommue.lib.web.shortId.ShortId;
+import io.comeandcommue.lib.data.baseEntity.BaseEntity;
+import io.comeandcommue.lib.data.shortId.ShortId;
 import io.comeandcommue.scraping.common.enums.ScrapTargetType;
 import io.comeandcommue.scraping.domain.community.CommunityEntity;
 import jakarta.persistence.*;
@@ -19,7 +20,7 @@ import java.util.List;
 @ToString(exclude = {"scrapProperties"}) // 순환 참조 방지
 @EqualsAndHashCode(of = "id", callSuper = false) // 엔티티 식별자로 equals/hashCode 정의
 @EntityListeners(AuditingEntityListener.class)
-public class ScrapInfoEntity {
+public class ScrapInfoEntity extends BaseEntity {
     @Id
     @ShortId
     private String id;

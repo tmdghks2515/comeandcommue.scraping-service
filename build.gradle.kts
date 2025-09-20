@@ -31,10 +31,19 @@ repositories {
 			 password = (findProperty("gpr.key") as String?) ?: System.getenv("GITHUB_TOKEN")
 		}
 	}
+	maven {
+		name = "GitHubPackages"
+		url = uri("https://maven.pkg.github.com/tmdghks2515/comeandcommue.lib.data-lib")
+		credentials {
+			username = (findProperty("gpr.user") as String?) ?: System.getenv("GITHUB_ACTOR")
+			password = (findProperty("gpr.key") as String?) ?: System.getenv("GITHUB_TOKEN")
+		}
+	}
 }
 
 dependencies {
 	implementation("io.comeandcommue.lib:web-lib:0.0.1-SNAPSHOT")
+	implementation("io.comeandcommue.lib:data-lib:0.0.1-SNAPSHOT")
 	implementation("org.springframework.boot:spring-boot-starter-data-redis")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.kafka:spring-kafka")

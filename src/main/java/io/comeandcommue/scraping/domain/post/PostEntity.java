@@ -1,12 +1,14 @@
 package io.comeandcommue.scraping.domain.post;
 
-import io.comeandcommue.lib.web.shortId.ShortId;
+import io.comeandcommue.lib.data.baseEntity.BaseEntity;
+import io.comeandcommue.lib.data.shortId.ShortId;
 import io.comeandcommue.scraping.common.enums.CommunityType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Entity
@@ -18,7 +20,7 @@ import java.time.LocalDateTime;
 //@ToString(exclude = {}) // 순환 참조 방지
 @EqualsAndHashCode(of = "id", callSuper = false) // 엔티티 식별자로 equals/hashCode 정의
 @EntityListeners(AuditingEntityListener.class)
-public class PostEntity {
+public class PostEntity extends BaseEntity {
     @Id
     @ShortId
     private String id;
@@ -58,11 +60,7 @@ public class PostEntity {
     private CommunityType communityType;
 
     @Column(name = "posted_at")
-    private LocalDateTime postedAt;
-
-    @CreatedDate
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt;
+    private Instant postedAt;
 
     public String getKey() {
         return postNo != null ? postNo : linkHref;
