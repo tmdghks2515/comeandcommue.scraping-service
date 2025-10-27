@@ -30,9 +30,6 @@ public class CommunityEntity extends BaseEntity {
     @Column(name = "has_img_permission")
     private boolean hasImgPermission;
 
-    @Column(name = "is_dynamic_rendering")
-    private boolean isDynamicRendering;
-
     @Column(name = "use_selenium")
     private boolean useSelenium;
 }

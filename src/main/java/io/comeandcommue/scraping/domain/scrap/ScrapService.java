@@ -21,6 +21,7 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,7 +33,13 @@ public class ScrapService {
     public List<PostEntity> scrapRealtimeHotPosts(List<ScrapInfoEntity> scrapInfoList) {
         if (scrapInfoList == null || scrapInfoList.isEmpty()) return List.of();
 
-        // 1) 버추얼 스레드 + 읽기 쉬운 스레드명
+        List<PostEntity> posts = new ArrayList<>();
+        for (ScrapInfoEntity scrapInfo : scrapInfoList ) {
+            posts.addAll(scrapByScrapInfo(scrapInfo));
+        }
+        return posts;
+
+        /*// 1) 버추얼 스레드 + 읽기 쉬운 스레드명
         ThreadFactory tf = Thread.ofVirtual().name("scraper-", 0).factory();
         try (ExecutorService exec = Executors.newThreadPerTaskExecutor(tf)) {
             // 2) Selenium 동시성 제한 (무겁기 때문)
@@ -79,7 +86,7 @@ public class ScrapService {
             }
 
             return all;
-        }
+        }*/
     }
 
     private List<PostEntity> scrapByScrapInfo(ScrapInfoEntity scrapInfo) {
@@ -110,12 +117,11 @@ public class ScrapService {
                     String linkHref = null;
                     String thumbnailSrc = null;
                     String authorName = null;
-                    Integer viewCount = null;
-                    Integer commentCount = null;
                     Instant postedAt = null;
 
                     for (ScrapPropertyEntity property : scrapInfo.getScrapProperties()) {
                         String extractedValue = extractValue(row, property);
+
                         switch (property.getPostPropertyType()) {
                             case POST_NO -> postNo = extractedValue;
                             case TITLE -> title = extractedValue;
@@ -260,12 +266,17 @@ public class ScrapService {
         LocalDate today = LocalDate.now(zone);
 
         try {
+            boolean hasYear = format.contains("y") || format.contains("Y");
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
 
-            // 날짜/시간 모두 존재
-            if ((format.contains("D") || format.contains("d")) && (format.contains("H") || format.contains("h"))) {
-                LocalDateTime dateTime = LocalDateTime.parse(value, formatter)
-                        .withYear(today.getYear());
+            // 날짜 + 시간
+            if ((format.contains("d") || format.contains("D")) && (format.contains("H") || format.contains("h"))) {
+                if (!hasYear) {
+                    value = today.getYear() + "-" + value; // 예: "10-27 12:30" → "2025-10-27 12:30"
+                    format = "yyyy-" + format;
+                    formatter = DateTimeFormatter.ofPattern(format);
+                }
+                LocalDateTime dateTime = LocalDateTime.parse(value, formatter);
                 instant = dateTime.atZone(zone).toInstant();
             }
             // 시간만 존재
@@ -275,15 +286,19 @@ public class ScrapService {
                 instant = dateTime.atZone(zone).toInstant();
             }
             // 날짜만 존재
-            else if (format.contains("D") || format.contains("d")) {
-                LocalDate date = LocalDate.parse(value, formatter)
-                        .withYear(today.getYear());
-                LocalDateTime dateTime = date.atStartOfDay();
-                instant = dateTime.atZone(zone).toInstant();
+            else if (format.contains("d") || format.contains("D")) {
+                if (!hasYear) {
+                    value = today.getYear() + "-" + value; // 예: "10-27" → "2025-10-27"
+                    format = "yyyy-" + format;
+                    formatter = DateTimeFormatter.ofPattern(format);
+                }
+                LocalDate date = LocalDate.parse(value, formatter);
+                instant = date.atStartOfDay(zone).toInstant();
+            } else {
+                throw new IllegalArgumentException("Invalid date format: " + format);
             }
-            else throw new IllegalArgumentException();
         } catch (RuntimeException e) {
-            log.info("Error formatting date: {}, format: {}", value, format);
+            log.warn("Error formatting date: {}, format: {}", value, format);
         }
 
         return instant;
@@ -303,7 +318,6 @@ public class ScrapService {
 
     private Document getTargetDocumentUsingSelenium(ScrapInfoEntity scrapInfo) {
         String url = scrapInfo.getTargetUrl();
-        boolean isDynamicRendering = scrapInfo.getCommunity().isDynamicRendering();
 
         // ① 드라이버 자동 설정
         // WebDriverManager.chromedriver().setup();
@@ -324,12 +338,6 @@ public class ScrapService {
             // ④ 스크래핑할 URL 접속
             driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
             driver.get(url);
-
-            // ⑤ 자바스크립트 렌더링 기다리기 (예: 인기 게시글 목록이 생길 때까지 대기)
-            if (isDynamicRendering) {
-                WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-                wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(scrapInfo.getTargetRowSelector())));
-            }
 
             // 전체 렌더링된 HTML을 직접 가져오기
             String pageSource = driver.getPageSource();
