@@ -6,6 +6,7 @@ import io.comeandcommue.scraping.common.enums.ScrapTargetType;
 import io.comeandcommue.scraping.domain.community.CommunityEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLRestriction;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ import java.util.List;
 @ToString(exclude = {"scrapProperties"}) // 순환 참조 방지
 @EqualsAndHashCode(of = "id", callSuper = false) // 엔티티 식별자로 equals/hashCode 정의
 @EntityListeners(AuditingEntityListener.class)
+@SQLRestriction("active = true")
 public class ScrapInfoEntity extends BaseEntity {
     @Id
     @ShortId
@@ -42,4 +44,7 @@ public class ScrapInfoEntity extends BaseEntity {
     @Builder.Default
     @OneToMany(mappedBy = "scrapInfo", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<ScrapPropertyEntity> scrapProperties = new ArrayList<>();
+
+    @Builder.Default
+    private boolean active = true;
 }
