@@ -18,11 +18,17 @@ pipeline {
         script {
           def image = "${REGISTRY}/${SERVICE}:${IMAGE_TAG}"
           def latest = "${REGISTRY}/${SERVICE}:latest"
-          sh """
-            docker build -t ${image} -t ${latest} .
-            docker push ${image}
-            docker push ${latest}
-          """
+
+          withCredentials([string(credentialsId: 'GITHUB_PKG_TOKEN', variable: 'GITHUB_PKG_TOKEN')]) {
+            sh """
+              DOCKER_BUILDKIT=0 docker build \
+                --build-arg GITHUB_ACTOR=tmdghks2515 \
+                --build-arg GITHUB_TOKEN=${GITHUB_PKG_TOKEN} \
+                -t ${image} -t ${latest} .
+              docker push ${image}
+              docker push ${latest}
+            """
+          }
         }
       }
     }
