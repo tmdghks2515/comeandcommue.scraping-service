@@ -22,8 +22,8 @@ pipeline {
           withCredentials([string(credentialsId: 'GITHUB_PKG_TOKEN', variable: 'GPR_KEY')]) {
             sh """
               DOCKER_BUILDKIT=0 docker build \
-              --build-arg GPR_USER=maven-token \
-              --build-arg GPR_KEY=${GPR_KEY} \
+              --build-arg GITHUB_ACTOR=tmdghks2515 \
+              --build-arg GITHUB_TOKEN=${GPR_KEY} \
                 -t ${image} -t ${latest} .
               docker push ${image}
               docker push ${latest}
