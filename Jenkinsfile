@@ -37,7 +37,7 @@ pipeline {
       steps {
         sshagent(credentials: ['anan-server-ssh']) {
           sh """
-            ssh -o StrictHostKeyChecking=no ubuntu@${DEPLOY_HOST} '
+            ssh -o StrictHostKeyChecking=no anan@${DEPLOY_HOST} '
               set -e
               cd ${DEPLOY_DIR}
               sed -i "s/^IMAGE_TAG=.*/IMAGE_TAG=${IMAGE_TAG}/" .env
