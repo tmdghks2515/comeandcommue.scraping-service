@@ -35,15 +35,17 @@ pipeline {
 
     stage('Deploy') {
       steps {
-        sh """
-          ssh -o StrictHostKeyChecking=no ubuntu@${DEPLOY_HOST} '
-            set -e
-            cd ${DEPLOY_DIR}
-            sed -i "s/^IMAGE_TAG=.*/IMAGE_TAG=${IMAGE_TAG}/" .env
-            docker compose --env-file .env pull ${SERVICE}
-            docker compose --env-file .env up -d --no-deps ${SERVICE}
-          '
-        """
+        sshagent(credentials: ['anan-server-ssh']) {
+          sh """
+            ssh -o StrictHostKeyChecking=no ubuntu@${DEPLOY_HOST} '
+              set -e
+              cd ${DEPLOY_DIR}
+              sed -i "s/^IMAGE_TAG=.*/IMAGE_TAG=${IMAGE_TAG}/" .env
+              docker compose --env-file .env pull ${SERVICE}
+              docker compose --env-file .env up -d --no-deps ${SERVICE}
+            '
+          """
+        }
       }
     }
   }
