@@ -35,12 +35,16 @@ pipeline {
 
     stage('Deploy') {
       steps {
-        sshagent(credentials: ['anan-server-ssh']) {
+        withCredentials([sshUserPrivateKey(
+          credentialsId: 'anan-server-ssh',
+          keyFileVariable: 'SSH_KEY',
+          usernameVariable: 'SSH_USER'
+        )]) {
           sh """
-            ssh -o StrictHostKeyChecking=no anan@${DEPLOY_HOST} '
+            ssh -i "$SSH_KEY" -o StrictHostKeyChecking=no $SSH_USER@${DEPLOY_HOST} '
               set -e
               cd ${DEPLOY_DIR}
-              sed -i "s/^IMAGE_TAG=.*/IMAGE_TAG=${IMAGE_TAG}/" .env
+              export IMAGE_TAG=${IMAGE_TAG}
               docker compose --env-file .env pull ${SERVICE}
               docker compose --env-file .env up -d --no-deps ${SERVICE}
             '
