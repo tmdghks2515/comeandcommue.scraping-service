@@ -19,11 +19,11 @@ pipeline {
           def image = "${REGISTRY}/${SERVICE}:${IMAGE_TAG}"
           def latest = "${REGISTRY}/${SERVICE}:latest"
 
-          withCredentials([string(credentialsId: 'GITHUB_PKG_TOKEN', variable: 'GITHUB_PKG_TOKEN')]) {
+          withCredentials([string(credentialsId: 'GITHUB_PKG_TOKEN', variable: 'GPR_KEY')]) {
             sh """
               DOCKER_BUILDKIT=0 docker build \
-                --build-arg GITHUB_ACTOR=tmdghks2515 \
-                --build-arg GITHUB_TOKEN=${GITHUB_PKG_TOKEN} \
+              --build-arg GPR_USER=tmdghks2515 \
+              --build-arg GPR_KEY=${GPR_KEY} \
                 -t ${image} -t ${latest} .
               docker push ${image}
               docker push ${latest}
