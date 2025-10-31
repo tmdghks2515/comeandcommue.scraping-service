@@ -40,15 +40,18 @@ pipeline {
           keyFileVariable: 'SSH_KEY',
           usernameVariable: 'SSH_USER'
         )]) {
-          sh """
-            ssh -i "$SSH_KEY" -o StrictHostKeyChecking=no $SSH_USER@${DEPLOY_HOST} '
+          sh(script: """
+            ssh -i "\$SSH_KEY" -o StrictHostKeyChecking=no \$SSH_USER@${DEPLOY_HOST} '
               set -e
               cd ${DEPLOY_DIR}
               export IMAGE_TAG=${IMAGE_TAG}
-              docker compose --env-file .env pull ${SERVICE}
-              docker compose --env-file .env up -d --no-deps ${SERVICE}
+              # .env 로드 (compose가 --env-file 못 쓸 때)
+              set -a; [ -f .env ] && . ./.env; set +a
+
+              docker compose pull ${SERVICE}
+              docker compose up -d --no-deps ${SERVICE}
             '
-          """
+          """)
         }
       }
     }
