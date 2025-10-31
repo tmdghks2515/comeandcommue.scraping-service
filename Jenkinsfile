@@ -1,8 +1,6 @@
 pipeline {
   agent any
   environment {
-    DOCKER_BUILDKIT = '1'
-    COMPOSE_DOCKER_CLI_BUILD = '1'
     REGISTRY    = '192.168.219.113:5000'  // A서버(사설 레지스트리)
     DEPLOY_HOST = '192.168.219.145'       // B서버
     DEPLOY_DIR  = '/srv/apps/daneyo'
