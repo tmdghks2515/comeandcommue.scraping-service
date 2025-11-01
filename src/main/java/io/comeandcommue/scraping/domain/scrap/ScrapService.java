@@ -9,11 +9,14 @@ import org.jsoup.select.Elements;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -314,25 +317,21 @@ public class ScrapService {
     private Document getTargetDocumentUsingSelenium(ScrapInfoEntity scrapInfo) {
         String url = scrapInfo.getTargetUrl();
 
-        // ① 드라이버 자동 설정
-        // WebDriverManager.chromedriver().setup();
-
-        // ② 옵션 설정 (헤드리스 모드 포함 가능)
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments("--headless=new");
-        options.addArguments("--no-sandbox");
-        options.addArguments("--disable-dev-shm-usage");
-        options.addArguments("--remote-allow-origins=*");
-        options.addArguments("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36");
-
-        // ③ WebDriver 실행
-        WebDriver driver = new ChromeDriver(options);
-
+        WebDriver driver = null;
         Document doc;
         try {
-            // ④ 스크래핑할 URL 접속
-            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-            driver.get(url);
+            String remote = System.getenv("SELENIUM_REMOTE_URL");
+            ChromeOptions options = new ChromeOptions();
+            options.addArguments("--headless=new","--disable-gpu","--no-sandbox",
+                    "--disable-dev-shm-usage","--window-size=1280,900","--lang=ko-KR");
+
+            driver = (remote != null && !remote.isBlank())
+                    ? new RemoteWebDriver(URI.create(remote).toURL(), options)
+                    : new ChromeDriver(options);
+
+                // 스크래핑할 URL 접속
+                driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+                driver.get(url);
 
             // 전체 렌더링된 HTML을 직접 가져오기
             String pageSource = driver.getPageSource();
@@ -340,8 +339,11 @@ public class ScrapService {
                 doc = Jsoup.parse(pageSource);
             else
                 doc = null;
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
         } finally {
-            driver.quit();
+            if (driver != null)
+                driver.quit();
         }
 
         return doc;
